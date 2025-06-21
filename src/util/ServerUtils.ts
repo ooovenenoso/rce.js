@@ -3,8 +3,25 @@ import type RCEManager from "../Manager";
 import { RCEEvent } from "../constants";
 
 export default class ServerUtils {
-  public static error(manager: RCEManager, error: string, server?: RustServer) {
-    manager.events.emit(RCEEvent.Error, { error, server });
+  public static error(
+    manager: RCEManager,
+    error: string,
+    server?: RustServer,
+    details?: any
+  ) {
+    manager.events.emit(RCEEvent.Error, { error, server, details });
+  }
+
+  public static formatRpcError(data: any): string {
+    if (Array.isArray(data?.errors) && data.errors.length) {
+      return data.errors
+        .map((e: any) => {
+          const dbg = e.extensions?.exception?.debug_error_string;
+          return dbg ? `${e.message} (${dbg})` : e.message;
+        })
+        .join("; ");
+    }
+    return JSON.stringify(data).slice(0, 200);
   }
 
   public static async setReady(

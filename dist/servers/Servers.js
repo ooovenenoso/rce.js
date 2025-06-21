@@ -446,11 +446,12 @@ class ServerManager {
                     }
                     const data = await response.json();
                     if (!data?.data?.sendConsoleMessage?.ok) {
-                        ServerUtils_1.default.error(this._manager, "Failed To Send Command: AioRpcError", server);
+                        const detail = ServerUtils_1.default.formatRpcError(data);
+                        ServerUtils_1.default.error(this._manager, `Failed To Send Command: AioRpcError - ${detail}`, server, data);
                         CommandHandler_1.default.remove(CommandHandler_1.default.get(identifier, command));
                         resolve({
                             ok: false,
-                            error: "AioRpcError",
+                            error: `AioRpcError - ${detail}`,
                         });
                     }
                     const cmd = CommandHandler_1.default.get(identifier, command);
@@ -787,7 +788,8 @@ class ServerManager {
             }
             const data = await response.json();
             if (!data?.data?.stopService?.ok) {
-                ServerUtils_1.default.error(this._manager, `Failed To Stop Server: AioRpcError`);
+                const detail = ServerUtils_1.default.formatRpcError(data);
+                ServerUtils_1.default.error(this._manager, `Failed To Stop Server: AioRpcError - ${detail}`, server, data);
                 return false;
             }
             this._manager.logger.debug(`[${identifier}] Server Stopped`);
@@ -842,7 +844,8 @@ class ServerManager {
             }
             const data = await response.json();
             if (!data?.data?.restartService?.cfgContext) {
-                ServerUtils_1.default.error(this._manager, `Failed To Start Server: AioRpcError`);
+                const detail = ServerUtils_1.default.formatRpcError(data);
+                ServerUtils_1.default.error(this._manager, `Failed To Start Server: AioRpcError - ${detail}`, server, data);
                 return false;
             }
             this._manager.logger.debug(`[${identifier}] Server Starting`);

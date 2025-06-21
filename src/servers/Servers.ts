@@ -573,15 +573,17 @@ export default class ServerManager {
 
           const data = await response.json();
           if (!data?.data?.sendConsoleMessage?.ok) {
+            const detail = ServerUtils.formatRpcError(data);
             ServerUtils.error(
               this._manager,
-              "Failed To Send Command: AioRpcError",
-              server
+              `Failed To Send Command: AioRpcError - ${detail}`,
+              server,
+              data
             );
             CommandHandler.remove(CommandHandler.get(identifier, command));
             resolve({
               ok: false,
-              error: "AioRpcError",
+              error: `AioRpcError - ${detail}`,
             });
           }
 
@@ -1035,7 +1037,13 @@ export default class ServerManager {
 
       const data = await response.json();
       if (!data?.data?.stopService?.ok) {
-        ServerUtils.error(this._manager, `Failed To Stop Server: AioRpcError`);
+        const detail = ServerUtils.formatRpcError(data);
+        ServerUtils.error(
+          this._manager,
+          `Failed To Stop Server: AioRpcError - ${detail}`,
+          server,
+          data
+        );
         return false;
       }
 
@@ -1109,7 +1117,13 @@ export default class ServerManager {
 
       const data = await response.json();
       if (!data?.data?.restartService?.cfgContext) {
-        ServerUtils.error(this._manager, `Failed To Start Server: AioRpcError`);
+        const detail = ServerUtils.formatRpcError(data);
+        ServerUtils.error(
+          this._manager,
+          `Failed To Start Server: AioRpcError - ${detail}`,
+          server,
+          data
+        );
         return false;
       }
 

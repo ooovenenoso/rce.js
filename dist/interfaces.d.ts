@@ -144,6 +144,7 @@ export interface FrequencyLostEventPayload extends EventPayload {
 export interface ErrorEventPayload {
     error: string;
     server?: RustServer;
+    details?: any;
 }
 export interface RCEEventTypes {
     [RCEEvent.Message]: MessageEventPayload;

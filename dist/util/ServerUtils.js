@@ -2,8 +2,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 class ServerUtils {
-    static error(manager, error, server) {
-        manager.events.emit(constants_1.RCEEvent.Error, { error, server });
+    static error(manager, error, server, details) {
+        manager.events.emit(constants_1.RCEEvent.Error, { error, server, details });
+    }
+    static formatRpcError(data) {
+        if (Array.isArray(data?.errors) && data.errors.length) {
+            return data.errors
+                .map((e) => {
+                const dbg = e.extensions?.exception?.debug_error_string;
+                return dbg ? `${e.message} (${dbg})` : e.message;
+            })
+                .join("; ");
+        }
+        return JSON.stringify(data).slice(0, 200);
     }
     static async setReady(manager, server, ready) {
         if (ready) {

@@ -573,13 +573,12 @@ export default class ServerManager {
 
           const data = await response.json();
           if (!data?.data?.sendConsoleMessage?.ok) {
-            const detail = Array.isArray(data?.errors) && data.errors.length
-              ? data.errors.map((e: any) => e.message).join("; ")
-              : JSON.stringify(data).slice(0, 200);
+            const detail = ServerUtils.formatRpcError(data);
             ServerUtils.error(
               this._manager,
               `Failed To Send Command: AioRpcError - ${detail}`,
-              server
+              server,
+              data
             );
             CommandHandler.remove(CommandHandler.get(identifier, command));
             resolve({
@@ -1038,12 +1037,12 @@ export default class ServerManager {
 
       const data = await response.json();
       if (!data?.data?.stopService?.ok) {
-        const detail = Array.isArray(data?.errors) && data.errors.length
-          ? data.errors.map((e: any) => e.message).join("; ")
-          : JSON.stringify(data).slice(0, 200);
+        const detail = ServerUtils.formatRpcError(data);
         ServerUtils.error(
           this._manager,
-          `Failed To Stop Server: AioRpcError - ${detail}`
+          `Failed To Stop Server: AioRpcError - ${detail}`,
+          server,
+          data
         );
         return false;
       }
@@ -1118,12 +1117,12 @@ export default class ServerManager {
 
       const data = await response.json();
       if (!data?.data?.restartService?.cfgContext) {
-        const detail = Array.isArray(data?.errors) && data.errors.length
-          ? data.errors.map((e: any) => e.message).join("; ")
-          : JSON.stringify(data).slice(0, 200);
+        const detail = ServerUtils.formatRpcError(data);
         ServerUtils.error(
           this._manager,
-          `Failed To Start Server: AioRpcError - ${detail}`
+          `Failed To Start Server: AioRpcError - ${detail}`,
+          server,
+          data
         );
         return false;
       }

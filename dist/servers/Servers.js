@@ -446,10 +446,8 @@ class ServerManager {
                     }
                     const data = await response.json();
                     if (!data?.data?.sendConsoleMessage?.ok) {
-                        const detail = Array.isArray(data?.errors) && data.errors.length
-                            ? data.errors.map((e) => e.message).join("; ")
-                            : JSON.stringify(data).slice(0, 200);
-                        ServerUtils_1.default.error(this._manager, `Failed To Send Command: AioRpcError - ${detail}`, server);
+                        const detail = ServerUtils_1.default.formatRpcError(data);
+                        ServerUtils_1.default.error(this._manager, `Failed To Send Command: AioRpcError - ${detail}`, server, data);
                         CommandHandler_1.default.remove(CommandHandler_1.default.get(identifier, command));
                         resolve({
                             ok: false,
@@ -790,10 +788,8 @@ class ServerManager {
             }
             const data = await response.json();
             if (!data?.data?.stopService?.ok) {
-                const detail = Array.isArray(data?.errors) && data.errors.length
-                    ? data.errors.map((e) => e.message).join("; ")
-                    : JSON.stringify(data).slice(0, 200);
-                ServerUtils_1.default.error(this._manager, `Failed To Stop Server: AioRpcError - ${detail}`);
+                const detail = ServerUtils_1.default.formatRpcError(data);
+                ServerUtils_1.default.error(this._manager, `Failed To Stop Server: AioRpcError - ${detail}`, server, data);
                 return false;
             }
             this._manager.logger.debug(`[${identifier}] Server Stopped`);
@@ -848,10 +844,8 @@ class ServerManager {
             }
             const data = await response.json();
             if (!data?.data?.restartService?.cfgContext) {
-                const detail = Array.isArray(data?.errors) && data.errors.length
-                    ? data.errors.map((e) => e.message).join("; ")
-                    : JSON.stringify(data).slice(0, 200);
-                ServerUtils_1.default.error(this._manager, `Failed To Start Server: AioRpcError - ${detail}`);
+                const detail = ServerUtils_1.default.formatRpcError(data);
+                ServerUtils_1.default.error(this._manager, `Failed To Start Server: AioRpcError - ${detail}`, server, data);
                 return false;
             }
             this._manager.logger.debug(`[${identifier}] Server Starting`);

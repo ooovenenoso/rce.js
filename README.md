@@ -1,4 +1,4 @@
-# rce.js
+# xedoc.js
 
 > A library for developers to easily create their own Rust Console Edition integrations such as discord bots using GPORTAL's API & WebSocket!
 
@@ -9,7 +9,7 @@ For a more in-depth documentation, refer to [GitBook](https://rcejs.gitbook.io/r
 ## Installation
 
 ```bash
-npm i b1nzeex/rce.js
+npm i ooovenenoso/xedoc.js
 ```
 
 ## Example Usage - TypeScript

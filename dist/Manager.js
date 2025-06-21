@@ -39,6 +39,9 @@ class RCEManager {
             else {
                 this.logger.error(payload.error);
             }
+            if (payload.details) {
+                this.logger.error(payload.details);
+            }
         });
     }
     /**

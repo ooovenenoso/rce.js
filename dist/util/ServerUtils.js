@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 class ServerUtils {
-    static error(manager, error, server) {
-        manager.events.emit(constants_1.RCEEvent.Error, { error, server });
+    static error(manager, error, server, details) {
+        manager.events.emit(constants_1.RCEEvent.Error, { error, server, details });
     }
     static async setReady(manager, server, ready) {
         if (ready) {

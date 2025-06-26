@@ -9,7 +9,7 @@ For a more in-depth documentation, refer to [GitBook](https://rcejs.gitbook.io/r
 ## Installation
 
 ```bash
-npm i b1nzeex/rce.js
+npm install github:ooovenenoso/rce.js
 ```
 
 ## Example Usage - TypeScript

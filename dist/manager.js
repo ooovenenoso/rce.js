@@ -20,7 +20,7 @@ class RCEManager extends events_1.EventEmitter {
      * @param opts.logLevel The log level for the logger. Default is LogLevel.Info
      * Creates an instance of RCEManager.
      */
-    constructor(opts) {
+    constructor(opts = {}) {
         super();
         this.logger =
             opts.logger?.instance ||

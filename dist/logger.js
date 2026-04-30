@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("./types");
 const util_1 = require("util");
 const fs_1 = require("fs");
+const path_1 = require("path");
 var ConsoleColor;
 (function (ConsoleColor) {
     ConsoleColor["Reset"] = "\u001B[0m";
@@ -24,32 +25,38 @@ class Logger {
             : (0, util_1.inspect)(content, { depth: 5 });
     }
     logToFile(type, message) {
-        if (this.file) {
-            (0, fs_1.stat)(this.file, (err, stats) => {
+        if (!this.file)
+            return;
+        const file = this.file;
+        const log = typeof message === "string"
+            ? `[${type.toUpperCase()}]: ${message}\n`
+            : `[${type.toUpperCase()}]: ${(0, util_1.inspect)(message, { depth: 5 })}\n`;
+        const appendLog = () => {
+            (0, fs_1.appendFile)(file, log, (err) => {
                 if (err) {
-                    (0, fs_1.writeFile)(this.file, "", (err) => {
-                        if (err) {
-                            this.warn(`Failed To Create Log File: ${err.message}`);
-                        }
-                    });
+                    this.warn(`Failed To Write To Log File: ${err.message}`);
                 }
-                if (stats.size > 300 * 1024 * 1024) {
-                    (0, fs_1.writeFile)(this.file, "", (err) => {
-                        if (err) {
-                            this.warn(`Failed To Clear Log File: ${err.message}`);
-                        }
-                    });
-                }
-                const log = typeof message === "string"
-                    ? `[${type.toUpperCase()}]: ${message}\n`
-                    : `[${type.toUpperCase()}]: ${(0, util_1.inspect)(message, { depth: 5 })}\n`;
-                (0, fs_1.appendFile)(this.file, log, (err) => {
-                    if (err) {
-                        this.warn(`Failed To Write To Log File: ${err.message}`);
-                    }
-                });
             });
-        }
+        };
+        (0, fs_1.mkdir)((0, path_1.dirname)(file), { recursive: true }, (mkdirErr) => {
+            if (mkdirErr) {
+                this.warn(`Failed To Create Log Directory: ${mkdirErr.message}`);
+                return;
+            }
+            (0, fs_1.stat)(file, (err, stats) => {
+                if (!err && stats.size > 300 * 1024 * 1024) {
+                    (0, fs_1.writeFile)(file, "", (writeErr) => {
+                        if (writeErr) {
+                            this.warn(`Failed To Clear Log File: ${writeErr.message}`);
+                            return;
+                        }
+                        appendLog();
+                    });
+                    return;
+                }
+                appendLog();
+            });
+        });
     }
     log(level, logType, message) {
         this.logToFile(logType.prefix, message);

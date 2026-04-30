@@ -9,7 +9,7 @@ export default class RCEManager extends EventEmitter {
      * @param opts.logLevel The log level for the logger. Default is LogLevel.Info
      * Creates an instance of RCEManager.
      */
-    constructor(opts: IOptions);
+    constructor(opts?: IOptions);
     /**
      *
      * @param options Options for the server to be added.

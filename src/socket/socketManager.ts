@@ -141,6 +141,7 @@ export default class SocketManager {
             const cmd = CommandManager.get(opts.identifier, Number(uniqueId));
             if (cmd) {
               if (cmd.timeout) clearTimeout(cmd.timeout);
+              CommandManager.remove(cmd);
               cmd.resolve(message);
             }
           }

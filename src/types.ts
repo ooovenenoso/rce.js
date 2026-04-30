@@ -4,7 +4,7 @@ import { QuickChat, QuickChatChannel } from "./data/quickChat";
 import SocketManager from "./socket/socketManager";
 
 export interface IOptions {
-  logger: {
+  logger?: {
     level?: LogLevel;
     instance?: ILogger;
     file?: string;
@@ -61,7 +61,7 @@ interface IServerIntervals {
 
 export interface IServer {
   identifier: string;
-  socket: WebSocket;
+  socket: WebSocket | null;
   socketManager?: SocketManager;
   flags: string[];
   intents: RCEIntent[];
@@ -385,7 +385,7 @@ export interface ICommandRequest {
   identifier: string;
   command: string;
   uniqueId?: number;
-  resolve: (value: string) => void;
+  resolve: (value: string | undefined) => void;
   reject: (reason?: any) => void;
   timeout?: ReturnType<typeof setTimeout>;
 }

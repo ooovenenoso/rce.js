@@ -1,7 +1,8 @@
 import { LogLevel } from "./types";
 import type { ILogger, ILogType } from "./types";
 import { inspect } from "util";
-import { stat, appendFile, writeFile } from "fs";
+import { stat, appendFile, writeFile, mkdir } from "fs";
+import { dirname } from "path";
 
 enum ConsoleColor {
   Reset = "\x1b[0m",
@@ -27,36 +28,44 @@ export default class Logger implements ILogger {
   }
 
   private logToFile(type: string, message: string) {
-    if (this.file) {
-      stat(this.file, (err, stats) => {
+    if (!this.file) return;
+
+    const file = this.file;
+    const log =
+      typeof message === "string"
+        ? `[${type.toUpperCase()}]: ${message}\n`
+        : `[${type.toUpperCase()}]: ${inspect(message, { depth: 5 })}\n`;
+
+    const appendLog = () => {
+      appendFile(file, log, (err) => {
         if (err) {
-          writeFile(this.file, "", (err) => {
-            if (err) {
-              this.warn(`Failed To Create Log File: ${err.message}`);
-            }
-          });
+          this.warn(`Failed To Write To Log File: ${err.message}`);
         }
-
-        if (stats.size > 300 * 1024 * 1024) {
-          writeFile(this.file, "", (err) => {
-            if (err) {
-              this.warn(`Failed To Clear Log File: ${err.message}`);
-            }
-          });
-        }
-
-        const log =
-          typeof message === "string"
-            ? `[${type.toUpperCase()}]: ${message}\n`
-            : `[${type.toUpperCase()}]: ${inspect(message, { depth: 5 })}\n`;
-
-        appendFile(this.file, log, (err) => {
-          if (err) {
-            this.warn(`Failed To Write To Log File: ${err.message}`);
-          }
-        });
       });
-    }
+    };
+
+    mkdir(dirname(file), { recursive: true }, (mkdirErr) => {
+      if (mkdirErr) {
+        this.warn(`Failed To Create Log Directory: ${mkdirErr.message}`);
+        return;
+      }
+
+      stat(file, (err, stats) => {
+        if (!err && stats.size > 300 * 1024 * 1024) {
+          writeFile(file, "", (writeErr) => {
+            if (writeErr) {
+              this.warn(`Failed To Clear Log File: ${writeErr.message}`);
+              return;
+            }
+
+            appendLog();
+          });
+          return;
+        }
+
+        appendLog();
+      });
+    });
   }
 
   private log(level: LogLevel, logType: ILogType, message: string) {

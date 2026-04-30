@@ -110,6 +110,7 @@ class SocketManager {
                         if (cmd) {
                             if (cmd.timeout)
                                 clearTimeout(cmd.timeout);
+                            commandManager_1.default.remove(cmd);
                             cmd.resolve(message);
                         }
                     }

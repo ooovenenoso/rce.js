@@ -30,7 +30,7 @@ export default class RCEManager extends EventEmitter {
    * @param opts.logLevel The log level for the logger. Default is LogLevel.Info
    * Creates an instance of RCEManager.
    */
-  public constructor(opts: IOptions) {
+  public constructor(opts: IOptions = {}) {
     super();
 
     this.logger =
@@ -197,7 +197,7 @@ export default class RCEManager extends EventEmitter {
       flags: [],
       intents: options.intents || [],
       intentTimers: options.intentTimers || {},
-      intervals: {} as any,
+      intervals: {},
       state: options.state || [],
       players: [],
       kits: [],
